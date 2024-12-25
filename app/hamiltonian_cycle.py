@@ -216,7 +216,7 @@ class HPath:
     def set_distance_to_apple(self):
         self.distance_to_apple = dist(self.finish_node.x, self.finish_node.y, self.get_last_node().x, self.get_last_node().y)
 
-    def add_to_tail(self, node):
+    def add_to_tail(self, node: HNode):
         self.nodes_in_path.append(node)
         self.path_length += 1
         self.set_distance_to_apple()
@@ -244,14 +244,14 @@ class HPath:
 
         return clone
 
-    def __str__(self):
+    def __repr__(self):
         s = ''
         for n in self.nodes_in_path:
             s += '(' + str(n.x) + ', ' + str(n.y) + ') '
         s += 'Distance to apple: ' + str(self.distance_to_apple)
         s += ' Path length: ' + str(self.path_length)
         s += ' Path counter: ' + str(self.path_counter)
-        return s
+        return s.strip()
 
 
 def dist(x1, y1, x2, y2):

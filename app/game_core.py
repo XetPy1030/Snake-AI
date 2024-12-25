@@ -42,6 +42,9 @@ class Snake:
             return
         self.direction = direction
 
+    def on_food_eaten(self):
+        pass
+
     def grow(self):
         self.body.append(self.body[-1])
 
@@ -73,10 +76,11 @@ class Game:
 
         # Проверяем, съела ли змейка еду
         if self.snake.body[0] == self.food:
-            self.snake.grow()
+            self.snake.on_food_eaten()
             if not self.spawn_food():
                 self.is_over = True
                 return False
+            self.snake.grow()
 
         return True
 

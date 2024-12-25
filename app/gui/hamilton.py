@@ -19,6 +19,9 @@ class HamiltonSnake(GUISnake):
 
     def grow(self):
         super().grow()
+
+    def on_food_eaten(self):
+        super().on_food_eaten()
         self.add_count += 1
 
     def move(self):
@@ -87,6 +90,7 @@ class HamiltonGame(Game):
             return
 
         current_x, current_y = self.snake.body[0]
+        self.future_path_segments.append(SSnakeFuturePathSegmentSprite((current_x, current_y)))
         for i in range(self.path.path_counter, self.path.path_length):
             diff_x = self.path.nodes_in_path[i + 1].x - self.path.nodes_in_path[i].x
             diff_y = self.path.nodes_in_path[i + 1].y - self.path.nodes_in_path[i].y
@@ -192,7 +196,7 @@ class HamiltonGame(Game):
 
     @property
     def tail_blocks(self):
-        return [Vector(*pos) for pos in self.snake.body[1:]]
+        return [Vector(*pos) for pos in self.snake.body[1:]][::-1]
 
 
 
