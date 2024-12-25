@@ -10,14 +10,16 @@ ASSETS_DIR = os.path.join(os.path.dirname(__file__), 'assets')
 class SnakeSegmentSprite(pygame.sprite.Sprite):
     containers = None
 
-    def __init__(self, position, width=10, height=10):
+    def __init__(self, position, is_head=False, width=10, height=10):
         super().__init__(self.containers)
 
         self.width = width
         self.height = height
 
-        self.image = pygame.Surface((self.width, self.height))
-        self.image.fill((255, 255, 255))
+        self.is_head = is_head
+
+        self.image = pygame.image.load(os.path.join(ASSETS_DIR, 'snake_head.png' if is_head else 'snake_body.png'))
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
         self.rect = self.image.get_rect()
         self.rect.x = position[0] * self.width
@@ -39,8 +41,8 @@ class AppleSprite(pygame.sprite.Sprite):
         self.width = width
         self.height = height
 
-        self.image = pygame.Surface((self.width, self.height))
-        self.image.fill((255, 0, 0))
+        self.image = pygame.image.load(os.path.join(ASSETS_DIR, 'apple.png'))
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
         self.rect = self.image.get_rect()
         self.rect.x = game.food[0] * self.width

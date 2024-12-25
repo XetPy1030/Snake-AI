@@ -20,7 +20,7 @@ NANOS_PER_TICK = 1_000_000_000 // TICKS_PER_SECOND
 class GUISnake(Snake):
     def __init__(self):
         super().__init__()
-        self.segments = [SSnakeSegmentSprite(position) for position in self.body]
+        self.segments = [SSnakeSegmentSprite(position, is_head=(i == 0)) for i, position in enumerate(self.body)]
 
     def move(self):
         super().move()
