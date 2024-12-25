@@ -6,7 +6,7 @@ import pygame
 from app.game_core import Game
 from app.gui_config import NANOS_PER_TICK
 
-ASSETS_DIR = os.path.join(os.path.dirname(__file__), 'assets')
+ASSETS_DIR = 'assets/'
 
 
 class SnakeSegmentSprite(pygame.sprite.Sprite):
