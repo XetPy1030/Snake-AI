@@ -4,7 +4,7 @@ import time
 import pygame
 
 from app.game_core import Game
-from app.gui_config import NANOS_PER_TICK
+from app.gui.config import NANOS_PER_TICK
 
 ASSETS_DIR = 'assets/'
 
@@ -22,6 +22,28 @@ class SnakeSegmentSprite(pygame.sprite.Sprite):
 
         self.image = pygame.image.load(os.path.join(ASSETS_DIR, 'snake_head.png' if is_head else 'snake_body.png'))
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
+
+        self.rect = self.image.get_rect()
+        self.rect.x = position[0] * self.width
+        self.rect.y = position[1] * self.height
+
+    def update_position(self, position):
+        self.rect.x = position[0] * self.width
+        self.rect.y = position[1] * self.height
+
+
+class SnakeFuturePathSegmentSprite(pygame.sprite.Sprite):
+    containers = None
+
+    def __init__(self, position, width=10, height=10):
+        super().__init__(self.containers)
+
+        self.width = width
+        self.height = height
+
+        self.image = pygame.Surface((self.width, self.height))
+        self.image.fill((0, 255, 0))
+        self.image.set_alpha(50)
 
         self.rect = self.image.get_rect()
         self.rect.x = position[0] * self.width

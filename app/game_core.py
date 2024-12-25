@@ -85,7 +85,6 @@ class Game:
             raise ValueError("Snake already added")
 
         self.snake = snake
-        self.spawn_food()
 
     def spawn_food(self) -> bool:
         if len(self.snake.body) == self.width * self.height:
