@@ -51,7 +51,7 @@ class Game:
         self.width = width
         self.height = height
         self.snake: Snake | None = None
-        self.food = None
+        self.food: TCoord | None = None
         self.is_over = False
 
     def tick(self):

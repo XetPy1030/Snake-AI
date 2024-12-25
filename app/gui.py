@@ -5,16 +5,11 @@ from functools import partial
 import pygame
 
 from app.game_core import Snake, Game, Direction
+from app.gui_config import DIVIDER, FPS, NANOS_PER_TICK
 from app.sprites import ASSETS_DIR, AppleSprite, SnakeSegmentSprite
-
-DIVIDER = 50
-FPS = 60
-TICKS_PER_SECOND = 10
 
 SSnakeSegmentSprite = partial(SnakeSegmentSprite, width=DIVIDER, height=DIVIDER)
 SAppleSprite = partial(AppleSprite, width=DIVIDER, height=DIVIDER)
-
-NANOS_PER_TICK = 1_000_000_000 // TICKS_PER_SECOND
 
 
 class GUISnake(Snake):

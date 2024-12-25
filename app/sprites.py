@@ -1,8 +1,10 @@
 import os
+import time
 
 import pygame
 
 from app.game_core import Game
+from app.gui_config import NANOS_PER_TICK
 
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), 'assets')
 
@@ -48,6 +50,28 @@ class AppleSprite(pygame.sprite.Sprite):
         self.rect.x = self.game.food[0] * self.width
         self.rect.y = self.game.food[1] * self.height
 
+        self.last_coordinate = self.game.food
+        self.position_for_update = self.game.food
+        self.start_update = time.time_ns()
+        self.last_update = time.time_ns()
+
     def update(self):
-        self.rect.x = self.game.food[0] * self.width
-        self.rect.y = self.game.food[1] * self.height
+        if self.last_coordinate == self.game.food:
+            return
+
+        if self.position_for_update != self.game.food:
+            self.start_update = time.time_ns()
+            self.position_for_update = self.game.food
+
+        progress = (time.time_ns() - self.start_update) / NANOS_PER_TICK
+        if progress > 1:
+            progress = 1
+
+        self.rect.x = self.last_coordinate[0] * self.width + (
+                self.game.food[0] - self.last_coordinate[0]) * self.width * progress
+        self.rect.y = self.last_coordinate[1] * self.height + (
+                self.game.food[1] - self.last_coordinate[1]) * self.height * progress
+
+        if progress >= 1:
+            self.last_coordinate = self.game.food
+            self.last_update = time.time_ns()
