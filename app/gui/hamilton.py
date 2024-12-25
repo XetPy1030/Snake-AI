@@ -1,20 +1,13 @@
 import os
 import time
-from dataclasses import dataclass
 
 import pygame
 
 from app.game_core import Game, Direction
 from app.gui.config import DIVIDER, NANOS_PER_TICK, FPS
 from app.gui.objects import GUISnake, SAppleSprite, SSnakeFuturePathSegmentSprite
-from app.hamiltonian_cycle import HamiltonianCycle, HPath
+from app.hamiltonian_cycle import HamiltonianCycle, HPath, HNode, Vector
 from app.sprites import ASSETS_DIR, SnakeSegmentSprite, AppleSprite, SnakeFuturePathSegmentSprite
-
-
-@dataclass
-class Vector:
-    x: int
-    y: int
 
 
 class HamiltonSnake(GUISnake):
@@ -22,6 +15,15 @@ class HamiltonSnake(GUISnake):
         super().__init__()
         self.hc = None
         self.cycle = []
+        self.add_count = 0
+
+    def grow(self):
+        super().grow()
+        self.add_count += 1
+
+    def move(self):
+        super().move()
+        self.add_count = max(0, self.add_count - 1)
 
     def reset_on_hamiltonian(self, hc, cycle):
         self.hc = hc
@@ -32,7 +34,6 @@ class HamiltonSnake(GUISnake):
 
 class HamiltonGame(Game):
     snake: HamiltonSnake
-    add_count = 1
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -170,13 +171,13 @@ class HamiltonGame(Game):
             return self.cycle[(self.hc.get_node_no(self.snake.body[0][0], self.snake.body[0][1]) + 1) % len(self.cycle)]
         return self.cycle[possible_next_positions[min_index]]
 
-    def over_takes_tail(self, new_pos, h=None, t=None):
+    def over_takes_tail(self, new_pos: HNode, h: HNode | None = None, t: Vector | HNode | None = None):
         min_distance_between_head_and_tail = 50
         head = h.cycle_no if h else self.hc.get_node_no(self.snake.body[0][0], self.snake.body[0][1])
         actual_tail = self.hc.get_node_no(t.x, t.y) if t else self.hc.get_node_no(self.tail_blocks[0].x, self.tail_blocks[0].y)
-        if self.get_distance_between_points(head, actual_tail) <= min_distance_between_head_and_tail + self.add_count:
+        if self.get_distance_between_points(head, actual_tail) <= min_distance_between_head_and_tail + self.snake.add_count:
             return True
-        tail = actual_tail - min_distance_between_head_and_tail - self.add_count
+        tail = actual_tail - min_distance_between_head_and_tail - self.snake.add_count
         while tail < 0:
             tail += len(self.cycle)
         if self.get_distance_between_points(head, new_pos.cycle_no) >= self.get_distance_between_points(head, tail):

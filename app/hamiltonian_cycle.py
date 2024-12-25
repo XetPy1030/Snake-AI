@@ -1,5 +1,12 @@
 import math
 import random
+from dataclasses import dataclass
+
+
+@dataclass
+class Vector:
+    x: int
+    y: int
 
 
 class HamiltonianCycle:
@@ -197,9 +204,9 @@ class HEdge:
 
 
 class HPath:
-    def __init__(self, starting_node, finishing_node):
+    def __init__(self, starting_node: HNode, finishing_node: HNode):
         self.path_length = 0
-        self.nodes_in_path = [starting_node]
+        self.nodes_in_path: list[HNode] = [starting_node]
         self.finish_node = finishing_node
 
         self.distance_to_apple = 0
@@ -214,14 +221,14 @@ class HPath:
         self.path_length += 1
         self.set_distance_to_apple()
 
-    def get_last_node(self):
+    def get_last_node(self) -> HNode:
         return self.nodes_in_path[-1]
 
-    def get_snake_tail_position_after_following_path(self, snake):
-        if self.path_length - snake.add_count < len(snake.tail_blocks):
-            return snake.tail_blocks[max(0, self.path_length - snake.add_count)]
-        tail_moved = self.path_length - snake.add_count
-        return self.nodes_in_path[tail_moved - len(snake.tail_blocks)]
+    def get_snake_tail_position_after_following_path(self, game) -> Vector | HNode:
+        if self.path_length - game.snake.add_count < len(game.tail_blocks):
+            return game.tail_blocks[max(0, self.path_length - game.snake.add_count)]
+        tail_moved = self.path_length - game.snake.add_count
+        return self.nodes_in_path[tail_moved - len(game.tail_blocks)]
 
     def get_next_move(self):
         x = self.nodes_in_path[self.path_counter + 1].x - self.nodes_in_path[self.path_counter].x
