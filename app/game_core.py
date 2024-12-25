@@ -45,6 +45,9 @@ class Snake:
     def grow(self):
         self.body.append(self.body[-1])
 
+    def kill(self):
+        pass
+
 
 class Game:
     def __init__(self, width=10, height=10):
@@ -55,6 +58,9 @@ class Game:
         self.is_over = False
 
     def tick(self):
+        if self.is_over:
+            return False
+
         assert self.snake is not None
 
         self.snake.move()
@@ -62,6 +68,7 @@ class Game:
         # Проверяем, не столкнулась ли змейка со стеной или с собой
         if not self.check_collision():
             self.is_over = True
+            self.snake.kill()
             return False
 
         # Проверяем, съела ли змейка еду

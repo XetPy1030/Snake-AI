@@ -56,6 +56,10 @@ class AppleSprite(pygame.sprite.Sprite):
         self.last_update = time.time_ns()
 
     def update(self):
+        if self.game.is_over:
+            self.kill()
+            return
+
         if self.last_coordinate == self.game.food:
             return
 
