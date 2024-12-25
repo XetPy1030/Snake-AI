@@ -45,8 +45,8 @@ class AppleSprite(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
         self.rect = self.image.get_rect()
-        self.rect.x = game.food[0] * self.width
-        self.rect.y = game.food[1] * self.height
+        self.rect.x = self.game.food[0] * self.width
+        self.rect.y = self.game.food[1] * self.height
 
     def update(self):
         self.rect.x = self.game.food[0] * self.width
