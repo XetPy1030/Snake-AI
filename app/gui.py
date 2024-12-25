@@ -1,4 +1,5 @@
 import os
+import time
 from functools import partial
 
 import pygame
@@ -7,9 +8,13 @@ from app.game_core import Snake, Game, Direction
 from app.sprites import ASSETS_DIR, AppleSprite, SnakeSegmentSprite
 
 DIVIDER = 50
+FPS = 60
+TICKS_PER_SECOND = 10
 
 SSnakeSegmentSprite = partial(SnakeSegmentSprite, width=DIVIDER, height=DIVIDER)
 SAppleSprite = partial(AppleSprite, width=DIVIDER, height=DIVIDER)
+
+NANOS_PER_TICK = 1_000_000_000 // TICKS_PER_SECOND
 
 
 class GUISnake(Snake):
@@ -59,6 +64,7 @@ def main():
     SAppleSprite(game, width=DIVIDER, height=DIVIDER)
 
     # Main loop
+    last_tick = time.time_ns()
     while not game.is_over:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -75,14 +81,17 @@ def main():
 
         screen.blit(background, (0, 0))
 
-        if not game.tick():
-            return
+        current_tick = time.time_ns()
+        if current_tick - last_tick >= NANOS_PER_TICK:
+            last_tick += NANOS_PER_TICK
+            if not game.tick():
+                return
 
         all_sprites.update()
         all_sprites.draw(screen)
 
         pygame.display.flip()
-        clock.tick(10)
+        clock.tick(FPS)
 
 
 if __name__ == '__main__':
