@@ -50,11 +50,13 @@ class Game:
     def __init__(self, width=10, height=10):
         self.width = width
         self.height = height
-        self.snake = None
+        self.snake: Snake | None = None
         self.food = None
         self.is_over = False
 
     def tick(self):
+        assert self.snake is not None
+
         self.snake.move()
 
         # Проверяем, не столкнулась ли змейка со стеной или с собой

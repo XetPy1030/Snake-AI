@@ -1,51 +1,30 @@
 import os
+from functools import partial
 
 import pygame
 
 from app.game_core import Snake, Game, Direction
+from app.sprites import ASSETS_DIR, AppleSprite, SnakeSegmentSprite
+
+DIVIDER = 50
+
+SSnakeSegmentSprite = partial(SnakeSegmentSprite, width=DIVIDER, height=DIVIDER)
+SAppleSprite = partial(AppleSprite, width=DIVIDER, height=DIVIDER)
 
 
-ASSETS_DIR = os.path.join(os.path.dirname(__file__), 'assets')
+class GUISnake(Snake):
+    def __init__(self):
+        super().__init__()
+        self.segments = [SSnakeSegmentSprite(position) for position in self.body]
 
+    def move(self):
+        super().move()
+        for segment, position in zip(self.segments, self.body):
+            segment.update_position(position)
 
-class SnakeSprite(pygame.sprite.Sprite):
-    containers = None
-
-    def __init__(self, snake: Snake):
-        super().__init__(self.containers)
-
-        self.snake = snake
-
-        self.image = pygame.Surface((10, 10))
-        self.image.fill((255, 255, 255))
-
-        self.rect = self.image.get_rect()
-        self.rect.x = snake.body[0][0] * 10
-        self.rect.y = snake.body[0][1] * 10
-
-    def update(self):
-        self.rect.x = self.snake.body[0][0] * 10
-        self.rect.y = self.snake.body[0][1] * 10
-
-
-class AppleSprite(pygame.sprite.Sprite):
-    containers = None
-
-    def __init__(self, game: Game):
-        super().__init__(self.containers)
-
-        self.game = game
-
-        self.image = pygame.Surface((10, 10))
-        self.image.fill((255, 0, 0))
-
-        self.rect = self.image.get_rect()
-        self.rect.x = game.food[0] * 10
-        self.rect.y = game.food[1] * 10
-
-    def update(self):
-        self.rect.x = self.game.food[0] * 10
-        self.rect.y = self.game.food[1] * 10
+    def grow(self):
+        super().grow()
+        self.segments.append(SSnakeSegmentSprite(self.body[-1]))
 
 
 def main():
@@ -66,19 +45,18 @@ def main():
     # Set up the clock
     clock = pygame.time.Clock()
 
-    # Set up the game
-    game = Game(width // 10, height // 10)
-    snake = Snake()
-    game.add_snake(snake)
-
     # Initialize Groups
     all_sprites = pygame.sprite.Group()
-    SnakeSprite.containers = all_sprites
+    SnakeSegmentSprite.containers = all_sprites
     AppleSprite.containers = all_sprites
 
+    # Set up the game
+    game = Game(width // DIVIDER, height // DIVIDER)
+    snake = GUISnake()
+    game.add_snake(snake)
+
     # Initialize the sprite
-    SnakeSprite(snake)
-    AppleSprite(game)
+    SAppleSprite(game, width=DIVIDER, height=DIVIDER)
 
     # Main loop
     while not game.is_over:
