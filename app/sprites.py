@@ -4,7 +4,7 @@ import time
 import pygame
 
 from app.game_core import Game
-from app.gui.config import NANOS_PER_TICK
+from app.gui.config import NANOS_PER_TICK, TICKS_PER_SECOND
 
 ASSETS_DIR = 'assets/'
 
@@ -35,11 +35,13 @@ class SnakeSegmentSprite(pygame.sprite.Sprite):
 class SnakeFuturePathSegmentSprite(pygame.sprite.Sprite):
     containers = None
 
-    def __init__(self, position, width=10, height=10):
+    def __init__(self, position, game, width=10, height=10):
         super().__init__(self.containers)
 
         self.width = width
         self.height = height
+        self.game = game
+        self.position = position
 
         self.image = pygame.Surface((self.width, self.height))
         self.image.fill((0, 255, 0))
@@ -49,9 +51,20 @@ class SnakeFuturePathSegmentSprite(pygame.sprite.Sprite):
         self.rect.x = position[0] * self.width
         self.rect.y = position[1] * self.height
 
-    def update_position(self, position):
-        self.rect.x = position[0] * self.width
-        self.rect.y = position[1] * self.height
+        self.start_update = None
+
+    def update(self, *args, **kwargs):
+        if self.start_update is None and self.position == self.game.snake.body[0]:
+            self.start_update = time.time_ns()
+
+        if self.start_update is not None:
+            progress = (time.time_ns() - self.start_update) / (NANOS_PER_TICK * TICKS_PER_SECOND)
+            if progress > 1:
+                progress = 1
+            self.image.set_alpha(50 - 50 * progress)
+
+            if progress >= 1:
+                self.kill()
 
 
 class AppleSprite(pygame.sprite.Sprite):

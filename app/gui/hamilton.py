@@ -90,7 +90,7 @@ class HamiltonGame(Game):
             return
 
         current_x, current_y = self.snake.body[0]
-        self.future_path_segments.append(SSnakeFuturePathSegmentSprite((current_x, current_y)))
+        self.future_path_segments.append(SSnakeFuturePathSegmentSprite((current_x, current_y), game=self))
         for i in range(self.path.path_counter, self.path.path_length):
             diff_x = self.path.nodes_in_path[i + 1].x - self.path.nodes_in_path[i].x
             diff_y = self.path.nodes_in_path[i + 1].y - self.path.nodes_in_path[i].y
@@ -98,7 +98,7 @@ class HamiltonGame(Game):
             current_x += diff_x
             current_y += diff_y
 
-            segment = SSnakeFuturePathSegmentSprite((current_x, current_y))
+            segment = SSnakeFuturePathSegmentSprite((current_x, current_y), game=self)
             self.future_path_segments.append(segment)
 
     def add_snake(self, snake: HamiltonSnake):
