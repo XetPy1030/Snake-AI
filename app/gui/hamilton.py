@@ -246,14 +246,11 @@ def main():
                 return
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    is_speeding = True
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
-                    is_speeding = False
+                    is_speeding = not is_speeding
 
         screen.blit(background, (0, 0))
 
-        if (time.time_ns() - last_tick >= NANOS_PER_TICK) or is_speeding:
+        if ((time.time_ns() - last_tick >= NANOS_PER_TICK) or is_speeding) and not game.is_over:
             last_tick += NANOS_PER_TICK if not is_speeding else 0
             if not game.tick():
                 print("Game over!")
